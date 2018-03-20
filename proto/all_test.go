@@ -1860,6 +1860,21 @@ func TestRequiredNotSetError(t *testing.T) {
 	}
 }
 
+func TestRequiredNotSetErrorWithBadWireTypes(t *testing.T) {
+	// Required field is properly a varint.
+	if err := Unmarshal([]byte{0x08, 0x00}, new(GoEnum)); err != nil {
+		t.Errorf("Unmarshal = %v, want nil", err)
+	}
+	// Required field is a fixed32 instead of varint.
+	if err := Unmarshal([]byte{0x0d, 0x00, 0x00, 0x00, 0x00}, new(GoEnum)); err == nil {
+		t.Errorf("Unmarshal = nil, want RequiredNotSetError")
+	}
+	// Required field has both varint and fixed32 (ignored).
+	if err := Unmarshal([]byte{0x08, 0x00, 0x0d, 0x00, 0x00, 0x00, 0x00}, new(GoEnum)); err != nil {
+		t.Errorf("Unmarshal = %v, want nil", err)
+	}
+}
+
 func fuzzUnmarshal(t *testing.T, data []byte) {
 	defer func() {
 		if e := recover(); e != nil {
