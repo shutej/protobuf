@@ -1320,7 +1320,7 @@ func (g *Generator) generateImports() {
 	// do, which is tricky when there's a plugin, just import it and
 	// reference it later. The same argument applies to the fmt and math packages.
 	g.P("import " + g.Pkg["proto"] + " " + strconv.Quote(g.ImportPrefix+"github.com/shutej/protobuf/proto"))
-	g.P("import " + g.Pkg["fmt"] + ` "fmt"`)
+	g.P("import " + g.Pkg["fmt"] + ` "github.com/cathalgarvey/fmtless"`)
 	g.P("import " + g.Pkg["math"] + ` "math"`)
 	for i, s := range g.file.Dependency {
 		fd := g.fileByName(s)
