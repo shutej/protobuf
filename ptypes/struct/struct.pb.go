@@ -14,8 +14,8 @@ It has these top-level messages:
 */
 package structpb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
+import proto "github.com/shutej/protobuf/proto"
+import fmt "github.com/cathalgarvey/fmtless"
 import math "math"
 
 // Reference imports to suppress errors if they are not otherwise used.

@@ -1,7 +1,7 @@
 // Go support for Protocol Buffers - Google's data interchange format
 //
 // Copyright 2015 The Go Authors.  All rights reserved.
-// https://github.com/golang/protobuf
+// https://github.com/shutej/protobuf
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -40,9 +40,7 @@ package jsonpb
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"math"
 	"reflect"
@@ -51,9 +49,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang/protobuf/proto"
+	fmt "github.com/cathalgarvey/fmtless"
+	"github.com/cathalgarvey/fmtless/encoding/json"
+	"github.com/shutej/protobuf/proto"
 
-	stpb "github.com/golang/protobuf/ptypes/struct"
+	stpb "github.com/shutej/protobuf/ptypes/struct"
 )
 
 // Marshaler is a configurable object for converting between
@@ -502,7 +502,10 @@ func (m *Marshaler) marshalValue(out *errWriter, prop *proto.Properties, v refle
 		// Unknown enum values will are stringified by the proto library as their
 		// value. Such values should _not_ be quoted or they will be interpreted
 		// as an enum string instead of their value.
-		enumStr := v.Interface().(fmt.Stringer).String()
+		type stringer interface {
+			String() string
+		}
+		enumStr := v.Interface().(stringer).String()
 		var valStr string
 		if v.Kind() == reflect.Ptr {
 			valStr = strconv.Itoa(int(v.Elem().Int()))

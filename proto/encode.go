@@ -1,7 +1,7 @@
 // Go support for Protocol Buffers - Google's data interchange format
 //
 // Copyright 2010 The Go Authors.  All rights reserved.
-// https://github.com/golang/protobuf
+// https://github.com/shutej/protobuf
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -37,9 +37,10 @@ package proto
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"sort"
+
+	fmt "github.com/cathalgarvey/fmtless"
 )
 
 // RequiredNotSetError is the error returned if Marshal is called with

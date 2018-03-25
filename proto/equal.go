@@ -1,7 +1,7 @@
 // Go support for Protocol Buffers - Google's data interchange format
 //
 // Copyright 2011 The Go Authors.  All rights reserved.
-// https://github.com/golang/protobuf
+// https://github.com/shutej/protobuf
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -35,9 +35,10 @@ package proto
 
 import (
 	"bytes"
-	"log"
 	"reflect"
 	"strings"
+
+	fmt "github.com/cathalgarvey/fmtless"
 )
 
 /*
@@ -236,7 +237,7 @@ func equalAny(v1, v2 reflect.Value, prop *Properties) bool {
 	}
 
 	// unknown type, so not a protocol buffer
-	log.Printf("proto: don't know how to compare %v", v1)
+	fmt.Printf("proto: don't know how to compare %v", v1)
 	return false
 }
 
@@ -276,7 +277,7 @@ func equalExtMap(base reflect.Type, em1, em2 map[int32]Extension) bool {
 			desc = m[extNum]
 		}
 		if desc == nil {
-			log.Printf("proto: don't know how to compare extension %d of %v", extNum, base)
+			fmt.Printf("proto: don't know how to compare extension %d of %v", extNum, base)
 			continue
 		}
 		var err error
@@ -288,7 +289,7 @@ func equalExtMap(base reflect.Type, em1, em2 map[int32]Extension) bool {
 		}
 		if err != nil {
 			// The encoded form is invalid.
-			log.Printf("proto: badly encoded extension %d of %v: %v", extNum, base, err)
+			fmt.Printf("proto: badly encoded extension %d of %v: %v", extNum, base, err)
 			return false
 		}
 		if !equalAny(reflect.ValueOf(m1), reflect.ValueOf(m2), nil) {

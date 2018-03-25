@@ -1,7 +1,7 @@
 // Go support for Protocol Buffers - Google's data interchange format
 //
 // Copyright 2011 The Go Authors.  All rights reserved.
-// https://github.com/golang/protobuf
+// https://github.com/shutej/protobuf
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -35,9 +35,10 @@
 package proto
 
 import (
-	"log"
 	"reflect"
 	"strings"
+
+	fmt "github.com/cathalgarvey/fmtless"
 )
 
 // Clone returns a deep copy of a protocol buffer.
@@ -207,7 +208,7 @@ func mergeAny(out, in reflect.Value, viaPtr bool, prop *Properties) {
 		mergeStruct(out, in)
 	default:
 		// unknown type, so not a protocol buffer
-		log.Printf("proto: don't know how to copy %v", in)
+		fmt.Printf("proto: don't know how to copy %v", in)
 	}
 }
 

@@ -1,7 +1,7 @@
 // Go support for Protocol Buffers - Google's data interchange format
 //
 // Copyright 2017 The Go Authors.  All rights reserved.
-// https://github.com/golang/protobuf
+// https://github.com/shutej/protobuf
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -32,9 +32,10 @@
 package proto
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
+
+	fmt "github.com/cathalgarvey/fmtless"
 )
 
 // DiscardUnknown recursively discards all unknown fields from this message

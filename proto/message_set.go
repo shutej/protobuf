@@ -37,11 +37,12 @@ package proto
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"reflect"
 	"sort"
+
+	fmt "github.com/cathalgarvey/fmtless"
+	"github.com/cathalgarvey/fmtless/encoding/json"
 )
 
 // errNoMessageTypeID occurs when a protocol buffer does not have a message type ID.
@@ -262,7 +263,7 @@ func MarshalMessageSetJSON(exts interface{}) ([]byte, error) {
 			// Unknown type; we can't render it, so skip it.
 			continue
 		}
-		fmt.Fprintf(&b, `"[%s]":`, msd.name)
+		b.WriteString(fmt.Sprintf(`"[%s]":`, msd.name))
 
 		x := ext.value
 		if x == nil {

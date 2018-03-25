@@ -1,7 +1,7 @@
 // Go support for Protocol Buffers - Google's data interchange format
 //
 // Copyright 2010 The Go Authors.  All rights reserved.
-// https://github.com/golang/protobuf
+// https://github.com/shutej/protobuf
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -38,13 +38,13 @@ import (
 	"bytes"
 	"encoding"
 	"errors"
-	"fmt"
 	"io"
-	"log"
 	"math"
 	"reflect"
 	"sort"
 	"strings"
+
+	fmt "github.com/cathalgarvey/fmtless"
 )
 
 var (
@@ -154,7 +154,7 @@ func (w *textWriter) indent() { w.ind++ }
 
 func (w *textWriter) unindent() {
 	if w.ind == 0 {
-		log.Print("proto: textWriter unindented too far")
+		fmt.Print("proto: textWriter unindented too far")
 		return
 	}
 	w.ind--
@@ -551,7 +551,7 @@ func (tm *TextMarshaler) writeAny(w *textWriter, v reflect.Value, props *Propert
 			return err
 		}
 	default:
-		_, err := fmt.Fprint(w, v.Interface())
+		_, err := w.WriteString(fmt.Sprint(v.Interface()))
 		return err
 	}
 	return nil
@@ -593,7 +593,7 @@ func writeString(w *textWriter, s string) error {
 			if isprint(c) {
 				err = w.w.WriteByte(c)
 			} else {
-				_, err = fmt.Fprintf(w.w, "\\%03o", c)
+				_, err = w.WriteString(fmt.Sprintf("\\%03o", c))
 			}
 		}
 		if err != nil {
@@ -605,7 +605,7 @@ func writeString(w *textWriter, s string) error {
 
 func writeUnknownStruct(w *textWriter, data []byte) (err error) {
 	if !w.compact {
-		if _, err := fmt.Fprintf(w, "/* %d unknown bytes */\n", len(data)); err != nil {
+		if _, err := w.WriteString(fmt.Sprintf("/* %d unknown bytes */\n", len(data))); err != nil {
 			return err
 		}
 	}
@@ -613,7 +613,7 @@ func writeUnknownStruct(w *textWriter, data []byte) (err error) {
 	for b.index < len(b.buf) {
 		x, err := b.DecodeVarint()
 		if err != nil {
-			_, err := fmt.Fprintf(w, "/* %v */\n", err)
+			_, err := w.WriteString(fmt.Sprintf("/* %v */\n", err))
 			return err
 		}
 		wire, tag := x&7, x>>3
@@ -624,7 +624,7 @@ func writeUnknownStruct(w *textWriter, data []byte) (err error) {
 			}
 			continue
 		}
-		if _, err := fmt.Fprint(w, tag); err != nil {
+		if _, err := w.WriteString(fmt.Sprint(tag)); err != nil {
 			return err
 		}
 		if wire != WireStartGroup {
@@ -641,9 +641,9 @@ func writeUnknownStruct(w *textWriter, data []byte) (err error) {
 		case WireBytes:
 			buf, e := b.DecodeRawBytes(false)
 			if e == nil {
-				_, err = fmt.Fprintf(w, "%q", buf)
+				_, err = w.WriteString(fmt.Sprintf("%q", buf))
 			} else {
-				_, err = fmt.Fprintf(w, "/* %v */", e)
+				_, err = w.WriteString(fmt.Sprintf("/* %v */", e))
 			}
 		case WireFixed32:
 			x, err = b.DecodeFixed32()
@@ -658,7 +658,7 @@ func writeUnknownStruct(w *textWriter, data []byte) (err error) {
 			x, err = b.DecodeVarint()
 			err = writeUnknownInt(w, x, err)
 		default:
-			_, err = fmt.Fprintf(w, "/* unknown wire type %d */", wire)
+			_, err = w.WriteString(fmt.Sprintf("/* unknown wire type %d */", wire))
 		}
 		if err != nil {
 			return err
@@ -672,9 +672,9 @@ func writeUnknownStruct(w *textWriter, data []byte) (err error) {
 
 func writeUnknownInt(w *textWriter, x uint64, err error) error {
 	if err == nil {
-		_, err = fmt.Fprint(w, x)
+		_, err = w.WriteString(fmt.Sprint(x))
 	} else {
-		_, err = fmt.Fprintf(w, "/* %v */", err)
+		_, err = w.WriteString(fmt.Sprintf("/* %v */", err))
 	}
 	return err
 }
@@ -743,7 +743,7 @@ func (tm *TextMarshaler) writeExtensions(w *textWriter, pv reflect.Value) error 
 }
 
 func (tm *TextMarshaler) writeExtension(w *textWriter, name string, pb interface{}) error {
-	if _, err := fmt.Fprintf(w, "[%s]:", name); err != nil {
+	if _, err := w.WriteString(fmt.Sprintf("[%s]:", name)); err != nil {
 		return err
 	}
 	if !w.compact {

@@ -1,7 +1,7 @@
 // Go support for Protocol Buffers - Google's data interchange format
 //
 // Copyright 2010 The Go Authors.  All rights reserved.
-// https://github.com/golang/protobuf
+// https://github.com/shutej/protobuf
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -36,14 +36,13 @@ package proto
  */
 
 import (
-	"fmt"
-	"log"
-	"os"
 	"reflect"
 	"sort"
 	"strconv"
 	"strings"
 	"sync"
+
+	fmt "github.com/cathalgarvey/fmtless"
 )
 
 const debug bool = false
@@ -254,7 +253,7 @@ func (p *Properties) Parse(s string) {
 	// "bytes,49,opt,name=foo,def=hello!"
 	fields := strings.Split(s, ",") // breaks def=, but handled below.
 	if len(fields) < 2 {
-		fmt.Fprintf(os.Stderr, "proto: tag has too few fields: %q\n", s)
+		fmt.Printf("proto: tag has too few fields: %q\n", s)
 		return
 	}
 
@@ -289,7 +288,7 @@ func (p *Properties) Parse(s string) {
 		p.WireType = WireBytes
 		// no numeric converter for non-numeric types
 	default:
-		fmt.Fprintf(os.Stderr, "proto: tag has unknown wire type: %q\n", s)
+		fmt.Printf("proto: tag has unknown wire type: %q\n", s)
 		return
 	}
 
@@ -333,7 +332,7 @@ func (p *Properties) Parse(s string) {
 }
 
 func logNoSliceEnc(t1, t2 reflect.Type) {
-	fmt.Fprintf(os.Stderr, "proto: no slice oenc for %T = []%T\n", t1, t2)
+	fmt.Printf("proto: no slice oenc for %T = []%T\n", t1, t2)
 }
 
 var protoMessageType = reflect.TypeOf((*Message)(nil)).Elem()
@@ -346,7 +345,7 @@ func (p *Properties) setEncAndDec(typ reflect.Type, f *reflect.StructField, lock
 
 	switch t1 := typ; t1.Kind() {
 	default:
-		fmt.Fprintf(os.Stderr, "proto: no coders for %v\n", t1)
+		fmt.Printf("proto: no coders for %v\n", t1)
 
 	// proto3 scalar types
 
@@ -382,7 +381,7 @@ func (p *Properties) setEncAndDec(typ reflect.Type, f *reflect.StructField, lock
 	case reflect.Ptr:
 		switch t2 := t1.Elem(); t2.Kind() {
 		default:
-			fmt.Fprintf(os.Stderr, "proto: no encoder function for %v -> %v\n", t1, t2)
+			fmt.Printf("proto: no encoder function for %v -> %v\n", t1, t2)
 			break
 		case reflect.Bool:
 			p.enc = (*Buffer).enc_bool
@@ -516,7 +515,7 @@ func (p *Properties) setEncAndDec(typ reflect.Type, f *reflect.StructField, lock
 		case reflect.Ptr:
 			switch t3 := t2.Elem(); t3.Kind() {
 			default:
-				fmt.Fprintf(os.Stderr, "proto: no ptr oenc for %T -> %T -> %T\n", t1, t2, t3)
+				fmt.Printf("proto: no ptr oenc for %T -> %T -> %T\n", t1, t2, t3)
 				break
 			case reflect.Struct:
 				p.stype = t2.Elem()
@@ -535,7 +534,7 @@ func (p *Properties) setEncAndDec(typ reflect.Type, f *reflect.StructField, lock
 		case reflect.Slice:
 			switch t2.Elem().Kind() {
 			default:
-				fmt.Fprintf(os.Stderr, "proto: no slice elem oenc for %T -> %T -> %T\n", t1, t2, t2.Elem())
+				fmt.Printf("proto: no slice elem oenc for %T -> %T -> %T\n", t1, t2, t2.Elem())
 				break
 			case reflect.Uint8:
 				p.enc = (*Buffer).enc_slice_slice_byte
@@ -716,7 +715,7 @@ func getPropertiesLocked(t reflect.Type) *StructProperties {
 			print("\n")
 		}
 		if p.enc == nil && !strings.HasPrefix(f.Name, "XXX_") && oneof == "" {
-			fmt.Fprintln(os.Stderr, "proto: no encoder for", f.Name, f.Type.String(), "[GetProperties]")
+			fmt.Printf("proto: no encoder for %s %s [GetProperties]", f.Name, f.Type.String())
 		}
 	}
 
@@ -782,7 +781,7 @@ func getPropertiesLocked(t reflect.Type) *StructProperties {
 // Return the Properties object for the x[0]'th field of the structure.
 func propByIndex(t reflect.Type, x []int) *Properties {
 	if len(x) != 1 {
-		fmt.Fprintf(os.Stderr, "proto: field index dimension %d (not 1) for type %s\n", len(x), t)
+		fmt.Printf("proto: field index dimension %d (not 1) for type %s\n", len(x), t)
 		return nil
 	}
 	prop := GetProperties(t)
@@ -835,7 +834,7 @@ var (
 func RegisterType(x Message, name string) {
 	if _, ok := protoTypes[name]; ok {
 		// TODO: Some day, make this a panic.
-		log.Printf("proto: duplicate proto type registered: %s", name)
+		fmt.Printf("proto: duplicate proto type registered: %s", name)
 		return
 	}
 	t := reflect.TypeOf(x)

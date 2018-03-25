@@ -1,7 +1,7 @@
 // Go support for Protocol Buffers - Google's data interchange format
 //
 // Copyright 2010 The Go Authors.  All rights reserved.
-// https://github.com/golang/protobuf
+// https://github.com/shutej/protobuf
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -37,10 +37,10 @@ package proto
 
 import (
 	"errors"
-	"fmt"
 	"io"
-	"os"
 	"reflect"
+
+	fmt "github.com/cathalgarvey/fmtless"
 )
 
 // errOverflow is returned when an integer is too large to be represented.
@@ -521,7 +521,7 @@ func (o *Buffer) unmarshalType(st reflect.Type, prop *StructProperties, is_group
 		p := prop.Prop[fieldnum]
 
 		if p.dec == nil {
-			fmt.Fprintf(os.Stderr, "proto: no protobuf decoder for %s.%s\n", st, st.Field(fieldnum).Name)
+			fmt.Printf("proto: no protobuf decoder for %s.%s\n", st, st.Field(fieldnum).Name)
 			continue
 		}
 		dec := p.dec

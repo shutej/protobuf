@@ -1,7 +1,7 @@
 // Go support for Protocol Buffers - Google's data interchange format
 //
 // Copyright 2010 The Go Authors.  All rights reserved.
-// https://github.com/golang/protobuf
+// https://github.com/shutej/protobuf
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -99,7 +99,7 @@ The resulting file, test.pb.go, is:
 
 	package example
 
-	import proto "github.com/golang/protobuf/proto"
+	import proto "github.com/shutej/protobuf/proto"
 	import math "math"
 
 	type FOO int32
@@ -226,7 +226,7 @@ To create and play with a Test object:
 	import (
 		"log"
 
-		"github.com/golang/protobuf/proto"
+		"github.com/shutej/protobuf/proto"
 		pb "./example.pb"
 	)
 
@@ -264,13 +264,13 @@ To create and play with a Test object:
 package proto
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
 	"reflect"
 	"sort"
 	"strconv"
 	"sync"
+
+	fmt "github.com/cathalgarvey/fmtless"
+	"github.com/cathalgarvey/fmtless/encoding/json"
 )
 
 // Message is implemented by generated protocol buffer messages.
@@ -650,7 +650,7 @@ func setDefaults(v reflect.Value, recur, zeros bool) {
 			}
 			*(fptr.(**uint64)) = u
 		default:
-			log.Printf("proto: can't set default for field %v (sf.kind=%v)", f, sf.kind)
+			fmt.Printf("proto: can't set default for field %v (sf.kind=%v)", f, sf.kind)
 		}
 	}
 
@@ -720,7 +720,7 @@ func buildDefaultMessage(t reflect.Type) (dm defaultMessage) {
 		sf, nested, err := fieldDefault(ft, prop)
 		switch {
 		case err != nil:
-			log.Print(err)
+			fmt.Print(err)
 		case nested:
 			dm.nested = append(dm.nested, fi)
 		case sf != nil:
